@@ -1,0 +1,10 @@
+CMakeCache.txt
+.clang/
+.codelite/
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+SunServer
+SunServer.project
+SunServer.workspace
