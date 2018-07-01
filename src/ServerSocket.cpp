@@ -10,11 +10,15 @@
 
 struct sockaddr_in serv, client_addr;
 
-int main() {
-	
-	//std::cout << "Enter the server port: " << std::endl;
-	int PORT = 8080;
-	//std::cin >> PORT;
+int main() 
+{	
+	std::cout << "Enter the server port: " << std::endl;
+	int PORT;
+	std::cin >> PORT;
+
+	std::cout << "Enter the message maximum size: " << std::endl;
+	int MAXSIZE;
+	std::cin >> MAXSIZE;
 	
 	int skt = socket(AF_INET, SOCK_STREAM, 0);
 	
@@ -43,10 +47,10 @@ int main() {
 		exit(1);
 	} 
 	
-	char* buffer[500];
-	bzero(buffer, 500);
+	char* buffer[MAXSIZE];
+	bzero(buffer, MAXSIZE);
 	
-	int sktread = read(newskt, buffer, 499);
+	int sktread = read(newskt, buffer, MAXSIZE-1);
 	
 	if (sktread < 0) {
 		std::cout << "Error reading message";
