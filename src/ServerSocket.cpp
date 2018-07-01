@@ -4,15 +4,18 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <fstream>
 #include <iostream>
 #include <unistd.h>
-
-#define PORT 8080
 
 struct sockaddr_in serv, client_addr;
 
 int main() {
-	char* buffer[256];
+	
+	//std::cout << "Enter the server port: " << std::endl;
+	int PORT = 8080;
+	//std::cin >> PORT;
+	
 	int skt = socket(AF_INET, SOCK_STREAM, 0);
 	
 	if (skt < 0){
@@ -30,8 +33,8 @@ int main() {
 		exit(1);
 	}
 	
-	listen(skt, 1);
 	std::cout << "Server listening on port " << PORT;
+	listen(skt, 5);
 	
 	int newskt = accept(skt, (struct sockaddr*)&client_addr, (socklen_t*)sizeof(client_addr));
 	
@@ -40,22 +43,30 @@ int main() {
 		exit(1);
 	} 
 	
-	bzero(buffer, 256);
+	char* buffer[500];
+	bzero(buffer, 500);
 	
-	int sktread = read(newskt, buffer, 255);
+	int sktread = read(newskt, buffer, 499);
 	
 	if (sktread < 0) {
 		std::cout << "Error reading message";
 		exit(1);
 	}
 	
-	std::cout << "The message recieved is: " << buffer << std::endl;
+	std::fstream stream("message.dat", std::ios::out | std::ios::binary | std::ios::trunc);
+	
+	if (stream.good()) {
+		stream << buffer;
 
-	if ((write(newskt, "I recieve your message properly", 31)) < 0) {
-		std::cout << "Error writing message" << std::endl;
+		if ((write(newskt, "Message recieved and saved properly", 36)) < 0) {
+			std::cout << "Error writing message" << std::endl;
+			exit(1);
+		}		
+	}
+	else {
+		write(newskt, "Erro openning file, connection closed.", 40);
 		exit(1);
 	}
-	
 	
 	return std::cin.get();
 }
